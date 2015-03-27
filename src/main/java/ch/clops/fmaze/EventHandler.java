@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.*;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.PriorityBlockingQueue;
 
 public class EventHandler {
@@ -24,48 +25,76 @@ public class EventHandler {
 
     private Map<String, Set<Client>> followers = new HashMap<>();
 
-    public void on(FollowEvent event) {
+    public void on(Event event) {
+
+        queue.add(event);
+    }
+
+    public CompletableFuture<Void> process() {
+
+        return CompletableFuture.runAsync(() -> {
+
+            int expected = 1;
+
+            Event head;
+            while ((head = queue.peek()) != null) {
+
+                if (head.sequence == expected) {
+                    expected++;
+                    process(queue.poll());
+                }
+            }
+        });
+    }
+
+    private void process(Event event) {
+
+    }
+
+
+
+    public void onFollow(Event event) {
 
         // add follower
         // notify followed client
-        Client followed = this.clientMap.get(event.toUser);
+        Client followed = this.clientMap.get(event.to);
         if(followed != null) {
 
-            Client follower = this.clientMap.get(event.fromUser);
+            Client follower = this.clientMap.get(event.from);
 
-            this.followers.get(event.toUser).add(follower);
+            this.followers.get(event.to).add(follower);
 
             followed.write(event.raw);
         }
     }
 
-    public void on(BroadcastEvent event) {
+    public void onBroadcast(Event event) {
 
         //notify all clients
         this.clientMap.values().forEach(c -> c.write(event.raw));
     }
 
-    public void on(UnfollowEvent event) {
+    public void onUnfollow(Event event) {
 
-        Client client = this.clientMap.getOrDefault(event.fromUser, nullClient);
+        Client client = this.clientMap.getOrDefault(event.from, nullClient);
 
         // remove follower, no notification
-        Set<Client> clients = this.followers.get(event.toUser);
+        Set<Client> clients = this.followers.get(event.to);
         if(clients != null) {
             clients.remove(client);
         }
     }
 
-    public void on(PrivateMessageEvent event) {
+    public void onPrivate(Event event) {
 
         // notify target user
-        clientMap.getOrDefault(event.toUser, nullClient).write(event.raw);
+        clientMap.getOrDefault(event.to, nullClient).write(event.raw);
     }
 
-    public void on(StatusUpdateEvent event) {
+    public void onStatusUpdate(Event event) {
 
         // notify followers
-        this.followers.getOrDefault(event.fromUser, Collections.emptySet()).forEach(c -> c.write(event.raw));
+        this.followers.getOrDefault(event.from, Collections.emptySet()).forEach(c -> c.write(event.raw));
     }
 
     public void on(Client client) {

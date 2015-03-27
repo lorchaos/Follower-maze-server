@@ -16,6 +16,9 @@ public class Server {
 
         CompletableFuture<Void> clientFuture = new ServerSocket(9099).listen(new ClientConnector(handler));
 
-        CompletableFuture.allOf(evFuture, clientFuture).get();
+        CompletableFuture<Void> h = handler.process();
+
+
+        CompletableFuture.allOf(evFuture, clientFuture, h).get();
     }
 }

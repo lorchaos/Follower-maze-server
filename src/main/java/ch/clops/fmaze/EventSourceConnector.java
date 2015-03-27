@@ -6,6 +6,7 @@ import org.slf4j.LoggerFactory;
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.Optional;
 import java.util.function.Consumer;
 
 public class EventSourceConnector implements Consumer<Socket> {
@@ -13,9 +14,11 @@ public class EventSourceConnector implements Consumer<Socket> {
     private static final Logger logger = LoggerFactory.getLogger(EventSourceConnector.class);
 
     private final EventParser parser;
+    private final EventHandler handler;
 
     public EventSourceConnector(EventHandler handler) {
-        this.parser = new EventParser(handler);
+        this.parser = new EventParser();
+        this.handler = handler;
     }
 
 
@@ -42,6 +45,6 @@ public class EventSourceConnector implements Consumer<Socket> {
 
         logger.info("Event received {}", s);
 
-        this.parser.parse(s);
+        this.parser.parse(s).ifPresent(this.handler::on);
     }
 }

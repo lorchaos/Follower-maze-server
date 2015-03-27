@@ -1,69 +1,52 @@
 package ch.clops.fmaze;
 
+import java.util.EnumSet;
+import java.util.Optional;
+
 /**
  * Created by rlorca on 25/03/15.
  */
-abstract public class Event {
+public class Event {
 
     public final String raw;
     public final int sequence;
+    public final String to;
+    public final String from;
+    private final EventType type;
 
-    Event(String raw, int sequence) {
+    Event(String raw, int sequence, EventType type, String from, String to) {
         this.raw = raw;
         this.sequence = sequence;
+        this.to = to;
+        this.from = from;
+        this.type = type;
     }
 }
 
-abstract class TargetedEvent extends Event {
+enum EventType {
 
-    public final String fromUser;
-    public final String toUser;
+    FOLLOW("F"),
+    UNFOLLOW("U"),
+    PRIVATE_MESSAGE("P"),
+    BROADCAST("B"),
+    STATUS_UPDATE("S");
 
 
-    TargetedEvent(String raw, int sequence, String fromUser, String toUser) {
+    private final String symbol;
 
-        super(raw, sequence);
-        this.fromUser = fromUser;
-        this.toUser = toUser;
+    EventType(String symbol) {
+        this.symbol = symbol;
     }
-}
 
-class BroadcastEvent extends Event {
+    static Optional<EventType> fromSymbol(String symbol) {
 
-    BroadcastEvent(String raw, int sequence) {
-        super(raw, sequence);
+        for(EventType e : EnumSet.allOf(EventType.class)) {
+
+            if(e.symbol.equals(symbol))
+                return Optional.of(e);
+        }
+
+        return Optional.empty();
     }
-}
 
-class StatusUpdateEvent extends Event {
-
-    public final String fromUser;
-
-    StatusUpdateEvent(String raw, int sequence, String fromUser) {
-        super(raw, sequence);
-        this.fromUser = fromUser;
-    }
-}
-
-class FollowEvent extends TargetedEvent {
-
-    FollowEvent(String raw, int sequence, String fromUser, String toUser) {
-
-        super(raw, sequence, fromUser, toUser);
-    }
-}
-
-
-class UnfollowEvent extends TargetedEvent {
-
-    UnfollowEvent(String raw, int sequence, String fromUser, String toUser) {
-        super(raw, sequence, fromUser, toUser);
-    }
-}
-
-class PrivateMessageEvent extends TargetedEvent {
-
-    PrivateMessageEvent(String raw, int sequence, String fromUser, String toUser) {
-        super(raw, sequence, fromUser, toUser);
-    }
 }
