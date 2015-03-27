@@ -36,10 +36,10 @@ public class EventHandler {
 
             int expected = 1;
 
-            Event head;
-            while ((head = queue.peek()) != null) {
+            while(true) {
+                Event head = queue.peek();
 
-                if (head.sequence == expected) {
+                if (head != null && head.sequence == expected) {
                     expected++;
                     process(queue.poll());
                 }
@@ -49,9 +49,28 @@ public class EventHandler {
 
     private void process(Event event) {
 
+        switch (event.type) {
+
+            case BROADCAST:
+                onBroadcast(event);
+                break;
+
+            case FOLLOW:
+                onFollow(event);
+                break;
+
+            case PRIVATE_MESSAGE:
+                onPrivate(event);
+                break;
+            case STATUS_UPDATE:
+                onStatusUpdate(event);
+                break;
+
+            case UNFOLLOW:
+                onUnfollow(event);
+                break;
+        }
     }
-
-
 
     public void onFollow(Event event) {
 

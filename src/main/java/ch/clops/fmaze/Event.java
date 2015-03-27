@@ -6,13 +6,13 @@ import java.util.Optional;
 /**
  * Created by rlorca on 25/03/15.
  */
-public class Event {
+public class Event implements Comparable<Event> {
 
     public final String raw;
     public final int sequence;
     public final String to;
     public final String from;
-    private final EventType type;
+    public final EventType type;
 
     Event(String raw, int sequence, EventType type, String from, String to) {
         this.raw = raw;
@@ -20,6 +20,11 @@ public class Event {
         this.to = to;
         this.from = from;
         this.type = type;
+    }
+
+    @Override
+    public int compareTo(Event o) {
+        return this.sequence - o.sequence;
     }
 }
 
