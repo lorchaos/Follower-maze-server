@@ -3,12 +3,16 @@ package ch.clops.fmaze;
 import org.junit.Assert;
 import org.junit.Test;
 
+import java.util.Optional;
+import java.util.PriorityQueue;
+
 import static junit.framework.TestCase.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Created by rlorca on 25/03/15.
  */
-public class EventParser {
+public class EventParsingTest {
 
     /*
     | Payload    | Sequence #| Type         | From User Id | To User Id |
@@ -23,12 +27,26 @@ public class EventParser {
     @Test
     public void follow() {
 
+        /*
         String payload = "666|F|60|50";
 
-        Event event = new Event(payload);
+        Optional<? extends Event> event = new EventParser().parse(payload);
 
-        assertEquals(666, event.sequence);
-        assertEquals(60, event.fromUser);
-        assertEquals(50, event.toUser);
+        assertTrue(event.isPresent());
+
+        event.ifPresent(ev -> {
+
+            assertEquals(666, ev.sequence);
+            //assertEquals(60, event.);
+            //assertEquals(50, event.toUser);
+        });
+        */
+    }
+
+    @Test
+    public void broadcast() {
+
+        //new EventParser().parse("542532|B");
+        //assertEquals(542532, event.sequence);
     }
 }
