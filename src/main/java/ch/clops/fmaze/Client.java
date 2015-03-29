@@ -6,6 +6,8 @@ import org.slf4j.LoggerFactory;
 
 import java.io.*;
 import java.net.Socket;
+import java.util.HashMap;
+import java.util.HashSet;
 
 /**
  * Created by rlorca on 26/03/15.
@@ -13,6 +15,9 @@ import java.net.Socket;
 public class Client {
 
     private static final Logger logger = LoggerFactory.getLogger(Client.class);
+
+    private final HashSet<Client> followers = new HashSet<>();
+
     private final Peer peer;
 
     private String id;
@@ -36,5 +41,18 @@ public class Client {
 
     public String getID() {
         return this.id;
+    }
+
+    public void addFollower(Client follower) {
+        this.followers.add(follower);
+    }
+
+    public void removeFollower(Client follower) {
+        this.followers.remove(follower);
+    }
+
+    public void broadcastToFollowers(String raw) {
+
+        this.followers.forEach(c -> c.write(raw));
     }
 }

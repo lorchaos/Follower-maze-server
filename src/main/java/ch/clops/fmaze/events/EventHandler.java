@@ -23,9 +23,7 @@ public class EventHandler {
     };
 
     private Map<String, Client> clientMap = new HashMap<>();
-
-    private Map<String, Set<Client>> followers = new HashMap<>();
-
+    
     public void on(Optional<Event> event) {
 
         event.ifPresent(queue::add);
@@ -84,14 +82,9 @@ public class EventHandler {
         // add follower
         // notify followed client
         Client followed = this.clientMap.get(event.to);
-        if(followed != null) {
+        Client follower = this.clientMap.get(event.from);
 
-            Client follower = this.clientMap.get(event.from);
-
-            this.followers.get(event.to).add(follower);
-
-            followed.write(event.raw);
-        }
+        followed.addFollower(follower);
     }
 
     public void onBroadcast(Event event) {
@@ -102,13 +95,10 @@ public class EventHandler {
 
     public void onUnfollow(Event event) {
 
-        Client client = this.clientMap.getOrDefault(event.from, nullClient);
+        Client follower = this.clientMap.getOrDefault(event.from, nullClient);
+        Client followed = this.clientMap.get(event.to);
 
-        // remove follower, no notification
-        Set<Client> clients = this.followers.get(event.to);
-        if(clients != null) {
-            clients.remove(client);
-        }
+        followed.removeFollower(follower);
     }
 
     public void onPrivate(Event event) {
@@ -119,14 +109,14 @@ public class EventHandler {
 
     public void onStatusUpdate(Event event) {
 
-        // notify followers
-        this.followers.getOrDefault(event.from, Collections.emptySet()).forEach(c -> c.write(event.raw));
+        Client client = this.clientMap.get(event.from);
+
+        client.broadcastToFollowers(event.raw);
     }
 
     public void on(Client client) {
 
         logger.info("New client {}", client.getID());
         this.clientMap.put(client.getID(), client);
-        this.followers.put(client.getID(), new HashSet<>());
     }
 }
