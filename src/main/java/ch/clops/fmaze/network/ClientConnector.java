@@ -1,13 +1,10 @@
 package ch.clops.fmaze.network;
 
 import ch.clops.fmaze.Client;
-import ch.clops.fmaze.events.EventHandler;
+import ch.clops.fmaze.events.EventOrder;
+import ch.clops.fmaze.events.EventVisitor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.io.*;
-import java.net.Socket;
-import java.util.function.Consumer;
 
 /**
  * Created by rlorca on 26/03/15.
@@ -16,9 +13,9 @@ public class ClientConnector implements Connector {
 
     private static final Logger logger = LoggerFactory.getLogger(ClientConnector.class);
 
-    private final EventHandler handler;
+    private final EventVisitor handler;
 
-    public ClientConnector(EventHandler handler) {
+    public ClientConnector(EventVisitor handler) {
         this.handler = handler;
     }
 

@@ -26,6 +26,32 @@ public class Event implements Comparable<Event> {
     public int compareTo(Event o) {
         return this.sequence - o.sequence;
     }
+
+    public void process(EventVisitor eventOrder) {
+
+        switch (this.type) {
+
+            case BROADCAST:
+                eventOrder.onBroadcast(this);
+                break;
+
+            case FOLLOW:
+                eventOrder.onFollow(this);
+                break;
+
+            case PRIVATE_MESSAGE:
+                eventOrder.onPrivate(this);
+                break;
+            case STATUS_UPDATE:
+                eventOrder.onStatusUpdate(this);
+                break;
+
+            case UNFOLLOW:
+                eventOrder.onUnfollow(this);
+                break;
+        }
+
+    }
 }
 
 enum EventType {
