@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.PriorityBlockingQueue;
+import java.util.function.Consumer;
 
 public class EventHandler {
 
@@ -14,20 +15,7 @@ public class EventHandler {
 
     private final PriorityBlockingQueue<Event> queue = new PriorityBlockingQueue<>();
 
-    private Client nullClient = new Client("0", null) {
-        @Override
-        public void write(String message) {
-
-            logger.info("Message ignored");
-        }
-    };
-
-    private Map<String, Client> clientMap = new HashMap<>();
-    
-    public void on(Optional<Event> event) {
-
-        event.ifPresent(queue::add);
-    }
+    private final HashMap<String, Client> clientMap = new HashMap<>();
 
     public CompletableFuture<Void> process() {
 
@@ -77,14 +65,18 @@ public class EventHandler {
         }
     }
 
+    public void on(Optional<Event> event) {
+
+        event.ifPresent(queue::add);
+    }
+
     public void onFollow(Event event) {
 
-        // add follower
-        // notify followed client
-        Client followed = this.clientMap.get(event.to);
-        Client follower = this.clientMap.get(event.from);
+        ifClient(event.to, followed -> {
 
-        followed.addFollower(follower);
+            followed.addFollower(event.from);
+            followed.write(event.raw);
+        });
     }
 
     public void onBroadcast(Event event) {
@@ -95,28 +87,42 @@ public class EventHandler {
 
     public void onUnfollow(Event event) {
 
-        Client follower = this.clientMap.getOrDefault(event.from, nullClient);
-        Client followed = this.clientMap.get(event.to);
-
-        followed.removeFollower(follower);
+        ifClient(event.to, f -> {
+            f.removeFollower(event.from);
+        });
     }
 
     public void onPrivate(Event event) {
 
-        // notify target user
-        clientMap.getOrDefault(event.to, nullClient).write(event.raw);
+        ifClient(event.to, c -> {
+            c.write(event.raw);
+        });
     }
 
     public void onStatusUpdate(Event event) {
 
-        Client client = this.clientMap.get(event.from);
+        ifClient(event.from, from -> {
 
-        client.broadcastToFollowers(event.raw);
+            from.forEachFollower(followerID -> {
+                ifClient(followerID, follower -> follower.write(event.raw));
+            });
+        });
     }
 
     public void on(Client client) {
 
         logger.info("New client {}", client.getID());
         this.clientMap.put(client.getID(), client);
+    }
+
+    private Optional<Client> op(String id) {
+
+        Client c = this.clientMap.get(id);
+        return c == null ? Optional.<Client>empty() : Optional.<Client>of(c);
+    }
+
+    private void ifClient(String id, Consumer<Client> f) {
+
+        op(id).ifPresent(f);
     }
 }
