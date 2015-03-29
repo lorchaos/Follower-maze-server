@@ -1,5 +1,6 @@
-package ch.clops.fmaze;
+package ch.clops.fmaze.events;
 
+import ch.clops.fmaze.Client;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -25,9 +26,9 @@ public class EventHandler {
 
     private Map<String, Set<Client>> followers = new HashMap<>();
 
-    public void on(Event event) {
+    public void on(Optional<Event> event) {
 
-        queue.add(event);
+        event.ifPresent(queue::add);
     }
 
     public CompletableFuture<Void> process() {
@@ -39,15 +40,21 @@ public class EventHandler {
             while(true) {
                 Event head = queue.peek();
 
-                if (head != null && head.sequence == expected) {
-                    expected++;
-                    process(queue.poll());
+                if (head != null) {
+                    if (head.sequence == expected) {
+                        expected++;
+                        process(queue.poll());
+                    } else {
+                        logger.info("Event {} received, waiting for {}", head.sequence, expected);
+                    }
                 }
             }
         });
     }
 
     private void process(Event event) {
+
+        logger.info("Processing event {}, {}", event.sequence, event.raw);
 
         switch (event.type) {
 

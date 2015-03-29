@@ -1,12 +1,10 @@
 package ch.clops.fmaze;
 
+import ch.clops.fmaze.network.Peer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.IOException;
-import java.io.OutputStream;
+import java.io.*;
 import java.net.Socket;
 
 /**
@@ -15,24 +13,22 @@ import java.net.Socket;
 public class Client {
 
     private static final Logger logger = LoggerFactory.getLogger(Client.class);
+    private final Peer peer;
 
-    private final BufferedWriter writer;
     private String id;
 
-    public Client(String id, BufferedWriter writer) {
+    public Client(String id, Peer peer) {
 
         this.id = id;
-        this.writer = writer;
+        this.peer = peer;
     }
-
 
     public void write(String message) {
 
         logger.info("Writing {} : {}", this.id, message);
+
         try {
-            this.writer.write(message);
-            this.writer.write("\r\n");
-            this.writer.flush();
+            this.peer.write(message + "\r\n");
         } catch (IOException e) {
             logger.error("Unable to write to client: " + this.id, e);
         }

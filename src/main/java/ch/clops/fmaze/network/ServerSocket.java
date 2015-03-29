@@ -1,4 +1,4 @@
-package ch.clops.fmaze;
+package ch.clops.fmaze.network;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -6,7 +6,6 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.net.Socket;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.Executors;
 import java.util.function.Consumer;
 
 /**
@@ -21,21 +20,22 @@ public class ServerSocket {
     public ServerSocket(int port) {
 
         this.port = port;
-
     }
 
-    public CompletableFuture<Void> listen(Consumer<Socket> f) throws IOException {
+    public CompletableFuture<Void> listen(final Connector connector) throws IOException {
 
         java.net.ServerSocket socket = new java.net.ServerSocket(this.port);
 
         return CompletableFuture.runAsync(() -> {
 
-            while (true)
-                try {
-                    f.accept(socket.accept());
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+            try {
+                while(connector.newPeer(new Peer(socket.accept())));
+                logger.info("Connector on port {} finished.", this.port);
+
+            } catch (Exception e) {
+                logger.warn("Stopping server in port " + this.port, e);
+            }
+
 
         });
     }

@@ -1,4 +1,4 @@
-package ch.clops.fmaze;
+package ch.clops.fmaze.events;
 
 import java.util.EnumSet;
 import java.util.Optional;

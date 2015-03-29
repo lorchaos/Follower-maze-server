@@ -1,4 +1,4 @@
-package ch.clops.fmaze;
+package ch.clops.fmaze.events;
 
 import java.util.Optional;
 
@@ -25,7 +25,6 @@ public class EventParser {
             if (fields.length > 3) {
                 to = fields[3];
             }
-
 
             return new Event(raw, eventSequence, type, from, to);
         });
