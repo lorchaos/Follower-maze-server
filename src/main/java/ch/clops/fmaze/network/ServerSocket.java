@@ -31,12 +31,9 @@ public class ServerSocket {
             try {
                 while(connector.newPeer(new Peer(socket.accept())));
                 logger.info("Connector on port {} finished.", this.port);
-
             } catch (Exception e) {
                 logger.warn("Stopping server in port " + this.port, e);
             }
-
-
         });
     }
 }

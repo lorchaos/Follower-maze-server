@@ -1,9 +1,12 @@
 package ch.clops.fmaze.events;
 
 import ch.clops.fmaze.Client;
+import ch.clops.fmaze.ClientRegistry;
+import ch.clops.fmaze.network.Peer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
@@ -16,51 +19,49 @@ public class EventVisitor {
 
     private static final Logger logger = LoggerFactory.getLogger(EventOrder.class);
 
-    private final ConcurrentHashMap<String, Client> clientMap = new ConcurrentHashMap<>();
+    private final HashMap<String, Client> clientMap = new HashMap<>();
+
+    private final ClientRegistry clientRegistry;
+
+    public EventVisitor(ClientRegistry registry) {
+        this.clientRegistry = registry;
+    }
 
     public void onFollow(Event event) {
 
-        ifClient(event.to, followed -> {
+        Client f = this.clientMap.get(event.to);
 
-            followed.addFollower(event.from);
-            followed.write(event.raw);
-        });
+        if(f == null) {
+            f = new Client(event.to);
+            this.clientMap.put(event.to, f);
+        }
+        f.addFollower(event.from);
+
+        this.clientRegistry.write(event.to, event.raw);
     }
 
     public void onBroadcast(Event event) {
 
-        //notify all clients
-        this.clientMap.values().forEach(c -> c.write(event.raw));
+        this.clientRegistry.write(event.raw);
     }
 
     public void onUnfollow(Event event) {
 
-        ifClient(event.to, f -> {
-            f.removeFollower(event.from);
-        });
+        ifClient(event.to, f -> f.removeFollower(event.from));
     }
 
     public void onPrivate(Event event) {
 
-        ifClient(event.to, c -> {
-            c.write(event.raw);
-        });
+        this.clientRegistry.write(event.to, event.raw);
     }
 
     public void onStatusUpdate(Event event) {
 
         ifClient(event.from, from -> {
-
             from.forEachFollower(followerID -> {
-                ifClient(followerID, follower -> follower.write(event.raw));
+                this.clientRegistry.write(followerID, event.raw);
             });
         });
-    }
-
-    public void on(Client client) {
-
-        logger.info("New client {}", client.getID());
-        this.clientMap.put(client.getID(), client);
     }
 
     private Optional<Client> op(String id) {

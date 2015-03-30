@@ -15,13 +15,15 @@ public class Server {
 
     public static void main(String[] args) throws Exception{
 
-        EventVisitor handler = new EventVisitor();
+        ClientRegistry registry = new ClientRegistry();
+
+        EventVisitor handler = new EventVisitor(registry);
 
         // receives event source events
         CompletableFuture<Void> evFuture = new ServerSocket(9090).listen(new EventSourceConnector(handler));
 
         // listen for clients
-        CompletableFuture<Void> clientFuture = new ServerSocket(9099).listen(new ClientConnector(handler));
+        CompletableFuture<Void> clientFuture = new ServerSocket(9099).listen(new ClientConnector(registry));
 
         // waits for the event store completion
         evFuture.get();

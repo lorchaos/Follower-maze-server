@@ -9,6 +9,7 @@ public class EventOrder {
 
     private static final Logger logger = LoggerFactory.getLogger(EventOrder.class);
 
+
     private final PriorityQueue<Event> queue = new PriorityQueue<>();
 
     private final EventVisitor visitor;
@@ -21,6 +22,8 @@ public class EventOrder {
 
     public void on(Optional<Event> event) {
 
+        logger.info("Received event {}", event);
+
         event.ifPresent(queue::add);
 
         while(processQueue());
@@ -28,13 +31,16 @@ public class EventOrder {
 
     private boolean processQueue() {
 
-        Event head = queue.peek();
+        final Event head = queue.peek();
 
         if((head != null) && (head.sequence == this.expectedSequence)) {
-            expectedSequence++;
-            logger.info("Processing event {}, {}", head.sequence, head.raw);
 
-            queue.poll().process(this.visitor);
+            this.expectedSequence++;
+            Event event = queue.poll();
+            event.process(this.visitor);
+
+            logger.info("Processing event {}", event);
+
             return true;
         }
 

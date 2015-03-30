@@ -52,6 +52,11 @@ public class Event implements Comparable<Event> {
         }
 
     }
+
+    @Override
+    public String toString() {
+        return this.raw;
+    }
 }
 
 enum EventType {
@@ -61,7 +66,6 @@ enum EventType {
     PRIVATE_MESSAGE("P"),
     BROADCAST("B"),
     STATUS_UPDATE("S");
-
 
     private final String symbol;
 

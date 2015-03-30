@@ -1,8 +1,6 @@
 package ch.clops.fmaze.network;
 
-import ch.clops.fmaze.Client;
-import ch.clops.fmaze.events.EventOrder;
-import ch.clops.fmaze.events.EventVisitor;
+import ch.clops.fmaze.ClientRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -13,10 +11,10 @@ public class ClientConnector implements Connector {
 
     private static final Logger logger = LoggerFactory.getLogger(ClientConnector.class);
 
-    private final EventVisitor handler;
+    private final ClientRegistry registry;
 
-    public ClientConnector(EventVisitor handler) {
-        this.handler = handler;
+    public ClientConnector(ClientRegistry registry) {
+        this.registry = registry;
     }
 
     @Override
@@ -24,10 +22,15 @@ public class ClientConnector implements Connector {
 
         String clientID =  peer.read().findFirst().orElseThrow(() -> new RuntimeException("Unable to get client ID"));
 
-        Client client = new Client(clientID, peer);
-
-        this.handler.on(client);
+        this.registry.onPeerConnected(clientID, peer);
 
         return true;
+    }
+
+    @Override
+    public void stop() {
+
+        logger.info("Stopping");
+        // close all clients
     }
 }
