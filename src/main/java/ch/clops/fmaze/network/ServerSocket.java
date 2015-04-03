@@ -10,29 +10,18 @@ public class ServerSocket {
 
     private static final Logger logger = LoggerFactory.getLogger(EventSourceConnector.class);
 
-    private final int port;
+    public static void listen(final int port, final Connector connector) {
 
-    public ServerSocket(int port) {
+        try (java.net.ServerSocket socket = new java.net.ServerSocket(port)) {
 
-        this.port = port;
-    }
+            logger.info("Socket listening on port {}", port);
 
-    public CompletableFuture<Void> listen(final Connector connector) {
+            while (connector.newPeer(new Peer(socket.accept()))) ;
 
-        return CompletableFuture.runAsync(() -> {
-
-            try (java.net.ServerSocket socket = new java.net.ServerSocket(this.port)) {
-
-                logger.info("Socket listening on port {}", this.port);
-
-                while (connector.newPeer(new Peer(socket.accept()))) ;
-
-            } catch (Exception e) {
-                logger.error("Error on connector, port " + this.port, e);
-            } finally {
-                connector.stop();
-                logger.info("Connector on port {} finished.", this.port);
-            }
-        });
+        } catch (Exception e) {
+            logger.error("Error on connector, port " + port, e);
+        } finally {
+            logger.info("Connector on port {} finished.", port);
+        }
     }
 }

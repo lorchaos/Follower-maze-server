@@ -1,6 +1,6 @@
 package ch.clops.fmaze.events;
 
-import ch.clops.fmaze.client.ClientRegistry;
+import ch.clops.fmaze.client.PeerRegistry;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -9,18 +9,18 @@ import static org.mockito.Mockito.*;
 public class EventProcessorTest {
 
     private EventProcessor processor;
-    private ClientRegistry registry;
+    private PeerRegistry registry;
 
     @Before
     public void setup() {
-        this.registry = mock(ClientRegistry.class);
+        this.registry = mock(PeerRegistry.class);
         this.processor = new EventProcessor(this.registry);
     }
 
     @Test
     public void broadcast() {
         this.processor.on(new BroadcastEvent("meh", 88));
-        verify(this.registry).write("meh");
+        verify(this.registry).broadcast("meh");
     }
 
     @Test

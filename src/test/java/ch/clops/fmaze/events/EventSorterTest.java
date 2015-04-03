@@ -1,6 +1,6 @@
 package ch.clops.fmaze.events;
 
-import ch.clops.fmaze.client.ClientRegistry;
+import ch.clops.fmaze.client.PeerRegistry;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -14,7 +14,7 @@ public class EventSorterTest {
 
     @Before
     public void setup() {
-        this.sorter = new EventSorter(new EventProcessor(new ClientRegistry()));
+        this.sorter = new EventSorter(new EventProcessor(new PeerRegistry()));
     }
 
     @Test

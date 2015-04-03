@@ -1,8 +1,8 @@
 package ch.clops.fmaze;
 
-import ch.clops.fmaze.client.ClientRegistry;
+import ch.clops.fmaze.client.PeerRegistry;
 import ch.clops.fmaze.events.EventProcessor;
-import ch.clops.fmaze.client.ClientConnector;
+import ch.clops.fmaze.client.PeerConnector;
 import ch.clops.fmaze.eventsource.EventSourceConnector;
 import ch.clops.fmaze.network.ServerSocket;
 
@@ -10,21 +10,21 @@ import java.util.concurrent.CompletableFuture;
 
 public class Server {
 
-    public static void main(String[] args) throws Exception{
+    public static void main(String[] args) throws Exception {
 
-        ClientRegistry registry = new ClientRegistry();
+        // keeps all connected peers
+        PeerRegistry peerRegistry = new PeerRegistry();
 
-        EventProcessor handler = new EventProcessor(registry);
+        // listen for peer connections
+        CompletableFuture<Void> peerFuture = CompletableFuture.runAsync(() ->
+            ServerSocket.listen(9099, new PeerConnector(peerRegistry))
+        );
 
         // receives event source events
-        CompletableFuture<Void> evFuture = new ServerSocket(9090).listen(new EventSourceConnector(handler));
+        ServerSocket.listen(9090, new EventSourceConnector(new EventProcessor(peerRegistry)));
 
-        // listen for clients
-        CompletableFuture<Void> clientFuture = new ServerSocket(9099).listen(new ClientConnector(registry));
+        peerFuture.cancel(false);
 
-        // waits for the event store completion
-        evFuture.get();
-
-        clientFuture.cancel(false);
+        peerRegistry.closeAll();
     }
 }

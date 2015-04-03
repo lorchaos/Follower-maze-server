@@ -3,13 +3,13 @@ package ch.clops.fmaze.client;
 import java.util.HashSet;
 import java.util.function.Consumer;
 
-public class Client {
+public class ClientGraph {
 
     private final HashSet<String> followers = new HashSet<>();
 
     private String id;
 
-    public Client(String id) {
+    public ClientGraph(String id) {
         this.id = id;
     }
 

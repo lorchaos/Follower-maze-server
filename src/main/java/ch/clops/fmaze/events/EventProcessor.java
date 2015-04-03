@@ -1,7 +1,7 @@
 package ch.clops.fmaze.events;
 
-import ch.clops.fmaze.client.Client;
-import ch.clops.fmaze.client.ClientRegistry;
+import ch.clops.fmaze.client.ClientGraph;
+import ch.clops.fmaze.client.PeerRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -12,31 +12,31 @@ public class EventProcessor {
 
     private static final Logger logger = LoggerFactory.getLogger(EventSorter.class);
 
-    private final HashMap<String, Client> clientMap = new HashMap<>();
+    private final HashMap<String, ClientGraph> clientMap = new HashMap<>();
 
-    private final ClientRegistry clientRegistry;
+    private final PeerRegistry peerRegistry;
 
-    public EventProcessor(ClientRegistry registry) {
-        this.clientRegistry = registry;
+    public EventProcessor(PeerRegistry registry) {
+        this.peerRegistry = registry;
     }
 
     public void on(FollowEvent event) {
 
         getClient(event.to).orElseGet(() -> {
 
-                    Client from = new Client(event.to);
-                    this.clientMap.put(event.to, from);
-                    return from;
+            ClientGraph from = new ClientGraph(event.to);
+            this.clientMap.put(event.to, from);
+            return from;
 
-                }).addFollower(event.from);
+        }).addFollower(event.from);
 
 
-        this.clientRegistry.write(event.to, event.raw);
+        this.peerRegistry.write(event.to, event.raw);
     }
 
     public void on(BroadcastEvent event) {
 
-        this.clientRegistry.write(event.raw);
+        this.peerRegistry.broadcast(event.raw);
     }
 
     public void on(UnfollowEvent event) {
@@ -46,19 +46,19 @@ public class EventProcessor {
 
     public void on(PrivateMessageEvent event) {
 
-        this.clientRegistry.write(event.to, event.raw);
+        this.peerRegistry.write(event.to, event.raw);
     }
 
     public void on(StatusUpdateEvent event) {
 
         getClient(event.from).ifPresent(from -> {
             from.forEachFollower(followerID -> {
-                this.clientRegistry.write(followerID, event.raw);
+                this.peerRegistry.write(followerID, event.raw);
             });
         });
     }
 
-    private Optional<Client> getClient(String id) {
+    private Optional<ClientGraph> getClient(String id) {
         return Optional.ofNullable(this.clientMap.get(id));
     }
 }

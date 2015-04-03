@@ -5,13 +5,13 @@ import ch.clops.fmaze.network.Peer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ClientConnector implements Connector {
+public class PeerConnector implements Connector {
 
-    private static final Logger logger = LoggerFactory.getLogger(ClientConnector.class);
+    private static final Logger logger = LoggerFactory.getLogger(PeerConnector.class);
 
-    private final ClientRegistry registry;
+    private final PeerRegistry registry;
 
-    public ClientConnector(ClientRegistry registry) {
+    public PeerConnector(PeerRegistry registry) {
         this.registry = registry;
     }
 
@@ -22,13 +22,7 @@ public class ClientConnector implements Connector {
 
         this.registry.onPeerConnected(clientID, peer);
 
+        // receives next peer
         return true;
-    }
-
-    @Override
-    public void stop() {
-
-        logger.info("Closing all clients");
-        this.registry.closeAll();
     }
 }

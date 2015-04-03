@@ -55,10 +55,15 @@ public class Peer {
         return StreamSupport.stream(Spliterators.spliteratorUnknownSize(it, Spliterator.ORDERED), false);
     }
 
-    public void write(String msg) throws IOException {
+    public void write(String msg) {
 
-        this.out.write(msg);
-        this.out.flush();
+        try {
+            this.out.write(msg);
+            this.out.write("\r\n");
+            this.out.flush();
+        } catch (IOException e) {
+            logger.error("Unable to write to peer", e);
+        }
     }
 
     public void close() {

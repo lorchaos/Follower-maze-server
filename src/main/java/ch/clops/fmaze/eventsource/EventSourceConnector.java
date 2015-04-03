@@ -22,6 +22,8 @@ public class EventSourceConnector implements Connector {
     public Boolean newPeer(Peer peer) {
 
         peer.read().map(new EventParser()::parse).forEach(this.sorter::on);
+
+        // only one event source will be processed
         return false;
     }
 }
