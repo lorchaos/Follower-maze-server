@@ -7,28 +7,41 @@ import java.util.Optional;
  */
 public class EventParser {
 
-    public Optional<Event> parse(String raw) {
+    public Optional<? extends BaseEvent> parse(String raw) {
 
         final String[] fields = raw.split("\\|");
 
-        int eventSequence = Integer.parseInt(fields[0]);
+        if(fields.length < 2) {
+           return Optional.empty();
+        }
 
-        return EventType.fromSymbol(fields[1]).map(type -> {
+        final int eventSequence = Integer.parseInt(fields[0]);
 
-            String eventType = fields[1];
-            String to = null, from = null;
+        final char type = fields[1].charAt(0);
+        final int sequence = Integer.parseInt(fields[0]);
 
-            if (fields.length > 2) {
-                from = fields[2];
-            }
+        String from = null, to = null;
 
-            if (fields.length > 3) {
-                to = fields[3];
-            }
+        if (fields.length > 2) {
+            from = fields[2];
+        }
 
-            return new Event(raw, eventSequence, type, from, to);
-        });
+        if (fields.length > 3) {
+            to = fields[3];
+        }
+
+        switch(type) {
+            case 'B': return Optional.of(new BroadcastEvent(raw, sequence));
+
+            case 'S': return Optional.of(new StatusUpdateEvent(raw, sequence, from));
+
+            case 'F': return Optional.of(new FollowEvent(raw, sequence, from, to));
+
+            case 'U': return Optional.of(new UnfollowEvent(raw, sequence, from, to));
+
+            case 'P': return Optional.of(new PrivateMessageEvent(raw, sequence, from, to));
+
+            default: return Optional.empty();
+        }
     }
-
-
 }

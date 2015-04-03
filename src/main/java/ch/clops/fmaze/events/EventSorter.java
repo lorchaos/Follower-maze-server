@@ -5,38 +5,39 @@ import org.slf4j.LoggerFactory;
 
 import java.util.*;
 
-public class EventOrder {
+public class EventSorter {
 
-    private static final Logger logger = LoggerFactory.getLogger(EventOrder.class);
+    private static final Logger logger = LoggerFactory.getLogger(EventSorter.class);
 
+    private final PriorityQueue<BaseEvent> queue = new PriorityQueue<>();
 
-    private final PriorityQueue<Event> queue = new PriorityQueue<>();
-
-    private final EventVisitor visitor;
+    private final EventProcessor visitor;
 
     private int expectedSequence = 1;
 
-    public EventOrder(EventVisitor visitor) {
+    public EventSorter(EventProcessor visitor) {
         this.visitor = visitor;
     }
 
-    public void on(Optional<Event> event) {
+    public int on(Optional<? extends BaseEvent> event) {
 
         logger.info("Received event {}", event);
 
         event.ifPresent(queue::add);
 
         while(processQueue());
+
+        return queue.size();
     }
 
     private boolean processQueue() {
 
-        final Event head = queue.peek();
+        final BaseEvent head = queue.peek();
 
         if((head != null) && (head.sequence == this.expectedSequence)) {
 
             this.expectedSequence++;
-            Event event = queue.poll();
+            BaseEvent event = queue.poll();
             event.process(this.visitor);
 
             logger.info("Processing event {}", event);

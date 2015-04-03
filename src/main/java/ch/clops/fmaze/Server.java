@@ -1,9 +1,9 @@
 package ch.clops.fmaze;
 
-import ch.clops.fmaze.events.EventOrder;
-import ch.clops.fmaze.events.EventVisitor;
-import ch.clops.fmaze.network.ClientConnector;
-import ch.clops.fmaze.network.EventSourceConnector;
+import ch.clops.fmaze.client.ClientRegistry;
+import ch.clops.fmaze.events.EventProcessor;
+import ch.clops.fmaze.client.ClientConnector;
+import ch.clops.fmaze.eventsource.EventSourceConnector;
 import ch.clops.fmaze.network.ServerSocket;
 
 import java.util.concurrent.CompletableFuture;
@@ -17,7 +17,7 @@ public class Server {
 
         ClientRegistry registry = new ClientRegistry();
 
-        EventVisitor handler = new EventVisitor(registry);
+        EventProcessor handler = new EventProcessor(registry);
 
         // receives event source events
         CompletableFuture<Void> evFuture = new ServerSocket(9090).listen(new EventSourceConnector(handler));
@@ -28,6 +28,6 @@ public class Server {
         // waits for the event store completion
         evFuture.get();
 
-        clientFuture.cancel(true);
+        clientFuture.cancel(false);
     }
 }

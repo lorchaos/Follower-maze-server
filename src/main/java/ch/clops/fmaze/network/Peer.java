@@ -1,5 +1,8 @@
 package ch.clops.fmaze.network;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.*;
 import java.net.Socket;
 import java.rmi.server.ExportException;
@@ -12,6 +15,8 @@ import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 public class Peer {
+
+    private static final Logger logger = LoggerFactory.getLogger(Peer.class);
 
     private final Socket socket;
     private final BufferedReader in;
@@ -54,5 +59,25 @@ public class Peer {
 
         this.out.write(msg);
         this.out.flush();
+    }
+
+    public void close() {
+
+        try {
+            this.out.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        try {
+            this.in.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        try {
+            this.socket.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

@@ -1,6 +1,7 @@
-package ch.clops.fmaze.network;
+package ch.clops.fmaze.client;
 
-import ch.clops.fmaze.ClientRegistry;
+import ch.clops.fmaze.network.Connector;
+import ch.clops.fmaze.network.Peer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -30,7 +31,7 @@ public class ClientConnector implements Connector {
     @Override
     public void stop() {
 
-        logger.info("Stopping");
-        // close all clients
+        logger.info("Closing all clients");
+        this.registry.closeAll();
     }
 }

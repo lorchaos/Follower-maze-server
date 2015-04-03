@@ -1,4 +1,4 @@
-package ch.clops.fmaze;
+package ch.clops.fmaze.client;
 
 import ch.clops.fmaze.network.Peer;
 import org.slf4j.Logger;
@@ -25,16 +25,16 @@ public class ClientRegistry {
 
     public void write(String raw) {
 
-        this.connectedPeers.values().forEach(v -> write(raw, v));
+        this.connectedPeers.values().forEach(v -> write(v, raw));
     }
 
     public void write(String to, String raw) {
 
         Peer peer = this.connectedPeers.get(to);
-        write(raw, peer);
+        write(peer, raw);
     }
 
-    private void write(String raw, Peer peer) {
+    private void write(Peer peer, String raw) {
 
         if(peer != null) {
             try {
@@ -43,5 +43,10 @@ public class ClientRegistry {
                 logger.warn("Unable to write to peer", e);
             }
         }
+    }
+
+    public void closeAll() {
+
+        this.connectedPeers.values().forEach(Peer::close);
     }
 }

@@ -1,4 +1,4 @@
-package ch.clops.fmaze;
+package ch.clops.fmaze.client;
 
 import java.util.HashSet;
 import java.util.function.Consumer;
