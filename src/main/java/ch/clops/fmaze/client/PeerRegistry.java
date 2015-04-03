@@ -5,12 +5,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class PeerRegistry {
 
     private static final Logger logger = LoggerFactory.getLogger(PeerRegistry.class);
 
-    private final HashMap<String, Peer> connectedPeers = new HashMap<>();
+    private final ConcurrentHashMap<String, Peer> connectedPeers = new ConcurrentHashMap<>();
 
     public void onPeerConnected(String clientID, Peer peer) {
 

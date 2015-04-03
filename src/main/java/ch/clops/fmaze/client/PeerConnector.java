@@ -5,6 +5,8 @@ import ch.clops.fmaze.network.Peer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Optional;
+
 public class PeerConnector implements Connector {
 
     private static final Logger logger = LoggerFactory.getLogger(PeerConnector.class);
@@ -18,9 +20,12 @@ public class PeerConnector implements Connector {
     @Override
     public Boolean newPeer(Peer peer) {
 
-        String clientID =  peer.read().findFirst().orElseThrow(() -> new RuntimeException("Unable to get client ID"));
-
-        this.registry.onPeerConnected(clientID, peer);
+        Optional<String> id = peer.read().findFirst();
+        if(id.isPresent()) {
+            this.registry.onPeerConnected(id.get(), peer);
+        } else {
+            logger.warn("Unable to get client ID");
+        }
 
         // receives next peer
         return true;
