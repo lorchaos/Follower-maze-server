@@ -8,9 +8,6 @@ import ch.clops.fmaze.network.ServerSocket;
 
 import java.util.concurrent.CompletableFuture;
 
-/**
- * Created by rlorca on 26/03/15.
- */
 public class Server {
 
     public static void main(String[] args) throws Exception{

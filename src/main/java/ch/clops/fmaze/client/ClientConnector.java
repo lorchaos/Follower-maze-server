@@ -5,9 +5,6 @@ import ch.clops.fmaze.network.Peer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- * Created by rlorca on 26/03/15.
- */
 public class ClientConnector implements Connector {
 
     private static final Logger logger = LoggerFactory.getLogger(ClientConnector.class);

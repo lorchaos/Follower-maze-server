@@ -8,9 +8,6 @@ import org.slf4j.LoggerFactory;
 import java.util.HashMap;
 import java.util.Optional;
 
-/**
- * Created by rlorca on 29/03/15.
- */
 public class EventProcessor {
 
     private static final Logger logger = LoggerFactory.getLogger(EventSorter.class);

@@ -2,9 +2,6 @@ package ch.clops.fmaze.events;
 
 import java.util.Optional;
 
-/**
- * Created by rlorca on 25/03/15.
- */
 public class EventParser {
 
     public Optional<? extends BaseEvent> parse(String raw) {

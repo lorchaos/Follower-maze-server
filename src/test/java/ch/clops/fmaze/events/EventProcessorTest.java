@@ -6,9 +6,6 @@ import org.junit.Test;
 
 import static org.mockito.Mockito.*;
 
-/**
- * Created by rlorca on 03/04/15.
- */
 public class EventProcessorTest {
 
     private EventProcessor processor;

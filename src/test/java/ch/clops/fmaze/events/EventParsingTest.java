@@ -1,21 +1,11 @@
 package ch.clops.fmaze.events;
 
-import ch.clops.fmaze.events.BaseEvent;
-import ch.clops.fmaze.events.EventParser;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.util.Optional;
-import java.util.PriorityQueue;
-
 import static junit.framework.Assert.assertFalse;
 import static junit.framework.TestCase.assertEquals;
-import static org.junit.Assert.assertTrue;
 
-/**
- * Created by rlorca on 25/03/15.
- */
 public class EventParsingTest {
     private EventParser parser;
 

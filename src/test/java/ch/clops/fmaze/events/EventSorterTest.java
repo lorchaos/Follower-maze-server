@@ -8,9 +8,6 @@ import java.util.Optional;
 
 import static org.junit.Assert.assertEquals;
 
-/**
- * Created by rlorca on 03/04/15.
- */
 public class EventSorterTest {
 
     private EventSorter sorter;

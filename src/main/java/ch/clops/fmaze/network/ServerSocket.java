@@ -6,9 +6,6 @@ import org.slf4j.LoggerFactory;
 
 import java.util.concurrent.CompletableFuture;
 
-/**
- * Created by rlorca on 26/03/15.
- */
 public class ServerSocket {
 
     private static final Logger logger = LoggerFactory.getLogger(EventSourceConnector.class);

@@ -7,9 +7,6 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.util.HashMap;
 
-/**
- * Created by rlorca on 30/03/15.
- */
 public class ClientRegistry {
 
     private static final Logger logger = LoggerFactory.getLogger(ClientRegistry.class);
