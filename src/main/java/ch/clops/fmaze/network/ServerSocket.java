@@ -23,6 +23,8 @@ public class ServerSocket {
 
             try (java.net.ServerSocket socket = new java.net.ServerSocket(this.port)) {
 
+                logger.info("Socket listening on port {}", this.port);
+
                 while (connector.newPeer(new Peer(socket.accept()))) ;
 
             } catch (Exception e) {
