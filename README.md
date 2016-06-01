@@ -1,6 +1,6 @@
-# Follower-maze-server
+# Follower-maze-server - Reactive edition
 
-An implementation of Follower-maze-server.
+An implementation of Follower-maze-server using RxJava.
 
 The executable jar can be generated with:
 ````  
