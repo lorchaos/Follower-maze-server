@@ -10,6 +10,7 @@ public class ClientGraph {
 
     private final HashMap<String, Set<String>> followers = new HashMap<>();
 
+
     public void forEachFollower(String to, Consumer<String> f) {
 
         get(to).ifPresent(followers -> followers.forEach(f));

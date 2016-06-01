@@ -1,9 +1,6 @@
 package ch.clops.fmaze.network;
 
-import ch.clops.fmaze.eventsource.EventSourceConnector;
 import lombok.extern.slf4j.Slf4j;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import rx.Observable;
 import rx.functions.Action1;
 import rx.functions.Func0;
@@ -47,7 +44,9 @@ public class ServerSocket {
                     subscriber.onNext(new Peer(socket.accept()));
                 }
             } catch (Exception e) {
-                subscriber.onError(e);
+                if(!subscriber.isUnsubscribed()) {
+                    subscriber.onError(e);
+                }
             }
         });
     }

@@ -2,6 +2,7 @@ package ch.clops.fmaze.network;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import rx.Observable;
 
 import java.io.*;
 import java.net.Socket;
@@ -29,30 +30,24 @@ public class Peer {
         this.out = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
     }
 
-    public Stream<String> read() {
+    public Observable<String> read() {
 
-        Iterator<String> it = new Iterator<String>() {
+        return Observable.create(subscriber ->  {
 
-            public String next;
+            try {
+                while (!subscriber.isUnsubscribed()) {
 
-            @Override
-            public boolean hasNext() {
-
-                try {
-                    next = in.readLine();
-                    return next != null;
-                } catch(Exception e) {
-                    return false;
+                    String line = in.readLine();
+                    if (line == null) {
+                        subscriber.onCompleted();
+                    } else {
+                        subscriber.onNext(line);
+                    }
                 }
+            } catch (Exception e) {
+                subscriber.onError(e);
             }
-
-            @Override
-            public String next() {
-                return next;
-            }
-        };
-
-        return StreamSupport.stream(Spliterators.spliteratorUnknownSize(it, Spliterator.ORDERED), false);
+        });
     }
 
     public void write(String msg) {
