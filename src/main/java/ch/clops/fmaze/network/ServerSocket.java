@@ -16,6 +16,7 @@ public class ServerSocket {
     public static Observable<Peer> listen(final int port) {
 
         Func0<java.net.ServerSocket> factory = () -> {
+            log.info("Socket listening on port {}", port);
             try {
                 return new java.net.ServerSocket(port);
             } catch (IOException e) {
@@ -24,6 +25,8 @@ public class ServerSocket {
         };
 
         Action1<java.net.ServerSocket> destroy = (s) -> {
+
+            log.info("Closing socket on port {}", port);
             try {
                 s.close();
             } catch (IOException e) {
@@ -38,8 +41,6 @@ public class ServerSocket {
     private static Observable<Peer> accept(java.net.ServerSocket socket) {
 
         return Observable.create(subscriber -> {
-
-            //logger.info("Socket listening on port {}", port);
 
             try {
                 while (!subscriber.isUnsubscribed()) {
