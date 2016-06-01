@@ -1,18 +1,17 @@
 package ch.clops.fmaze.events;
 
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+
 /**
  * Created by rlorca on 25/03/15.
  */
 
+@RequiredArgsConstructor
 public abstract class BaseEvent implements Comparable<BaseEvent> {
 
     public final String raw;
     public final int sequence;
-
-    BaseEvent(String raw, int sequence) {
-        this.raw = raw;
-        this.sequence = sequence;
-    }
 
     @Override
     public int compareTo(BaseEvent o) {

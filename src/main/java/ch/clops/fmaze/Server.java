@@ -5,6 +5,7 @@ import ch.clops.fmaze.events.EventProcessor;
 import ch.clops.fmaze.client.PeerConnector;
 import ch.clops.fmaze.eventsource.EventSourceConnector;
 import ch.clops.fmaze.network.ServerSocket;
+import rx.schedulers.Schedulers;
 
 import java.util.concurrent.CompletableFuture;
 
@@ -15,16 +16,19 @@ public class Server {
         // keeps all connected peers
         PeerRegistry peerRegistry = new PeerRegistry();
 
-        // listen for peer connections
-        CompletableFuture<Void> peerFuture = CompletableFuture.runAsync(() ->
-            ServerSocket.listen(9099, new PeerConnector(peerRegistry))
-        );
+        PeerConnector peerConnector = new PeerConnector(peerRegistry);
 
-        // receives event source events
-        ServerSocket.listen(9090, new EventSourceConnector(new EventProcessor(peerRegistry)));
+        EventSourceConnector eventSourceConnector = new EventSourceConnector(new EventProcessor(peerRegistry));
 
-        peerFuture.cancel(false);
+        ServerSocket.listen(9099)
+            .doOnNext(peerConnector)
+            .subscribeOn(Schedulers.newThread())
+            .subscribe();
 
-        peerRegistry.closeAll();
+        ServerSocket.listen(9090)
+            .first()
+            .doOnNext(eventSourceConnector)
+            .doOnCompleted(() -> peerRegistry.closeAll())
+            .subscribe();
     }
 }

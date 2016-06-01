@@ -3,14 +3,14 @@ package ch.clops.fmaze.eventsource;
 import ch.clops.fmaze.events.EventSorter;
 import ch.clops.fmaze.events.EventParser;
 import ch.clops.fmaze.events.EventProcessor;
-import ch.clops.fmaze.network.Connector;
 import ch.clops.fmaze.network.Peer;
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import rx.functions.Action1;
 
-public class EventSourceConnector implements Connector {
-
-    private static final Logger logger = LoggerFactory.getLogger(EventSourceConnector.class);
+@Slf4j
+public class EventSourceConnector implements Action1<Peer> {
 
     private final EventSorter sorter;
 
@@ -19,11 +19,7 @@ public class EventSourceConnector implements Connector {
     }
 
     @Override
-    public Boolean newPeer(Peer peer) {
-
+    public void call(Peer peer) {
         peer.read().map(new EventParser()::parse).forEach(this.sorter::on);
-
-        // only one event source will be processed
-        return false;
     }
 }

@@ -1,13 +1,15 @@
 package ch.clops.fmaze.events;
 
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.*;
 
+@Slf4j
+@RequiredArgsConstructor
 public class EventSorter {
-
-    private static final Logger logger = LoggerFactory.getLogger(EventSorter.class);
 
     private final PriorityQueue<BaseEvent> queue = new PriorityQueue<>();
 
@@ -15,13 +17,9 @@ public class EventSorter {
 
     private int expectedSequence = 1;
 
-    public EventSorter(EventProcessor visitor) {
-        this.visitor = visitor;
-    }
-
     public int on(Optional<? extends BaseEvent> event) {
 
-        logger.info("Received event {}", event);
+        log.info("Received event {}", event);
 
         event.ifPresent(queue::add);
 
@@ -40,7 +38,7 @@ public class EventSorter {
             BaseEvent event = queue.poll();
             event.process(this.visitor);
 
-            logger.info("Processing event {}", event);
+            log.info("Processing event {}", event);
 
             return true;
         }
