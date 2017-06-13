@@ -1,8 +1,8 @@
 package ch.clops.fmaze;
 
+import ch.clops.fmaze.client.PeerConnector;
 import ch.clops.fmaze.client.PeerRegistry;
 import ch.clops.fmaze.events.EventProcessor;
-import ch.clops.fmaze.client.PeerConnector;
 import ch.clops.fmaze.eventsource.EventSourceConnector;
 import ch.clops.fmaze.network.ServerSocket;
 

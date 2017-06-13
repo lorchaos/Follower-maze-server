@@ -12,12 +12,11 @@ public class EventParser {
            return Optional.empty();
         }
 
-        final int eventSequence = Integer.parseInt(fields[0]);
-
         final char type = fields[1].charAt(0);
         final int sequence = Integer.parseInt(fields[0]);
 
-        String from = null, to = null;
+        String from = null;
+        String to = null;
 
         if (fields.length > 2) {
             from = fields[2];

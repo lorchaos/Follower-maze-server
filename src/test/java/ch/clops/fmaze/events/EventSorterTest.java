@@ -13,7 +13,7 @@ public class EventSorterTest {
     private EventSorter sorter;
 
     @Before
-    public void setup() {
+    public void setUp() {
         this.sorter = new EventSorter(new EventProcessor(new PeerRegistry()));
     }
 

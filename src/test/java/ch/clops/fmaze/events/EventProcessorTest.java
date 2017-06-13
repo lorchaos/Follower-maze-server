@@ -12,7 +12,7 @@ public class EventProcessorTest {
     private PeerRegistry registry;
 
     @Before
-    public void setup() {
+    public void setUp() {
         this.registry = mock(PeerRegistry.class);
         this.processor = new EventProcessor(this.registry);
     }

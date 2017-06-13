@@ -17,7 +17,7 @@ public class ClientGraphTest {
     private ClientGraph graph;
 
     @Before
-    public void setup() {
+    public void setUp() {
         this.graph = new ClientGraph();
     }
 

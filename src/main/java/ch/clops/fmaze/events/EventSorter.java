@@ -3,7 +3,8 @@ package ch.clops.fmaze.events;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.*;
+import java.util.Optional;
+import java.util.PriorityQueue;
 
 public class EventSorter {
 
