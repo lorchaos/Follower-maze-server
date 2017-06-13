@@ -5,8 +5,6 @@ import ch.clops.fmaze.events.EventProcessor;
 import ch.clops.fmaze.events.EventSorter;
 import ch.clops.fmaze.network.Connector;
 import ch.clops.fmaze.network.Peer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class EventSourceConnector implements Connector {
 

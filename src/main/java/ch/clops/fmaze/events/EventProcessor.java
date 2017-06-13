@@ -1,12 +1,8 @@
 package ch.clops.fmaze.events;
 
 import ch.clops.fmaze.client.PeerRegistry;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class EventProcessor {
-
-    private static final Logger logger = LoggerFactory.getLogger(EventSorter.class);
 
     private final ClientGraph graph = new ClientGraph();
 
